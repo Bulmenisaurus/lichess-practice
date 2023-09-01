@@ -7,7 +7,28 @@ import { ChessBoard } from './board';
 
 //https://github.com/niklasf/chessops
 
+//TODO: stuff breaks when a line from the pov of white ends on black's turn
+
 export type Variation = { line: string[]; orientation: 'white' | 'black' };
+
+const shuffle = <T>(arr: readonly T[]) => {
+    let array = [...arr];
+
+    let currentIndex = array.length,
+        randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex > 0) {
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
+};
 
 const main = async () => {
     const studyPgn = await getStudy(config.studyId, config.accessToken);
@@ -17,15 +38,15 @@ const main = async () => {
     const board = new ChessBoard(chessBoardContainer);
 
     const allVariations: Variation[] = [];
-    // parsed.asWhite.variations.forEach((variation) => {
-    //     allVariations.push({ line: variation, orientation: 'white' });
-    // });
+    parsed.asWhite.variations.forEach((variation) => {
+        allVariations.push({ line: variation, orientation: 'white' });
+    });
 
     parsed.asBlack.variations.forEach((variation) => {
         allVariations.push({ line: variation, orientation: 'black' });
     });
 
-    board.loadChapter(allVariations);
+    board.loadChapter(shuffle(allVariations));
 };
 
 main();

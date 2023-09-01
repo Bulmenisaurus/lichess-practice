@@ -97,7 +97,6 @@ export class ChessBoard {
     }
 
     handleMove(move: Move) {
-        debugger;
         console.log(`Handling move: ${move.san}`);
         if (this.lines === undefined) {
             console.log(':(');
@@ -107,10 +106,14 @@ export class ChessBoard {
         const currentPly = this.boardState.history().length;
         // ply is 1-based, js are 0-based: we need to offset by one
         const expectedMove = this.lines[this.linesIdx].line[currentPly - 1];
+        const isMoveWrong = expectedMove !== move.san;
+        if (isMoveWrong) {
+            alert(`Wrong! Expected ${expectedMove}, got ${move.san}`);
+        }
         console.log(`Expected ${expectedMove}, got ${move.san}`);
 
         // line is over, load the next one
-        if (currentPly === this.lines[this.linesIdx].line.length) {
+        if (currentPly === this.lines[this.linesIdx].line.length || isMoveWrong) {
             // lines concluded
             if (this.linesIdx + 1 === this.lines.length) {
                 console.log('Study over');
