@@ -7,3 +7,7 @@
     width: 400px;
     height: 400px;
 }
+
+coords {
+    user-select: none;
+}

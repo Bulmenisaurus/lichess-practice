@@ -83,7 +83,13 @@ export class ChessBoard {
         this.chessGround.set({
             orientation: variation.orientation,
             fen: this.boardState.fen(),
+            // this is so that a move from the previous game is not shown
+            highlight: {
+                lastMove: false,
+            },
         });
+
+        this.chessGround;
 
         if (variation.orientation === 'black') {
             this.boardState.move(variation.line[0]);
@@ -92,11 +98,20 @@ export class ChessBoard {
                 movable: {
                     dests: this.getDests(),
                 },
+                highlight: {
+                    lastMove: true,
+                },
             });
         }
     }
 
     handleMove(move: Move) {
+        this.chessGround.set({
+            highlight: {
+                lastMove: true,
+            },
+        });
+
         console.log(`Handling move: ${move.san}`);
         if (this.lines === undefined) {
             console.log(':(');
