@@ -8,7 +8,7 @@ interface StudyInfo {
 export interface ChapterInfo {
     orientation: 'white' | 'black';
     // an array of every single possible set of moves starting from the startpos to one of the leaves
-    variations: string[][];
+    variations: StudyMove[][];
 }
 
 export const parse = (pgn: string): StudyInfo => {
@@ -43,10 +43,15 @@ const getGameInfo = (game: Game<PgnNodeData>): ChapterInfo => {
     };
 };
 
+export interface StudyMove {
+    notation: string;
+    comments: string | undefined;
+}
+
 // given the current node, return all of the paths from that node to a leaf node
 // this effectively gives us all the variations in the study
-const allRootLeafPaths = (rootNode: ChessNode<PgnNodeData>): string[][] => {
-    const variations: string[][] = [];
+const allRootLeafPaths = (rootNode: ChessNode<PgnNodeData>): StudyMove[][] => {
+    const variations: StudyMove[][] = [];
 
     // once we reach a leaf, return an empty variation
     if (rootNode.children.length === 0) {
@@ -58,7 +63,12 @@ const allRootLeafPaths = (rootNode: ChessNode<PgnNodeData>): string[][] => {
 
         for (const childVariation of childVariations) {
             // get the variation starting from this child, including the move that got us to this variation
-            variations.push([child.data.san, ...childVariation]);
+            const comments = child.data.comments;
+            const move: StudyMove = {
+                notation: child.data.san,
+                comments: comments ? comments.join('\n') : undefined,
+            };
+            variations.push([move, ...childVariation]);
         }
     }
 

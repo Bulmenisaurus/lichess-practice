@@ -4,7 +4,7 @@ export const getStudy = async (studyId: string, accessToken: string): Promise<st
     const url = new URL(`https://lichess.org/api/study/${studyId}.pgn`);
 
     url.searchParams.set('clocks', 'false');
-    url.searchParams.set('comments', 'false');
+    url.searchParams.set('comments', 'true');
     url.searchParams.set('source', 'true');
     url.searchParams.set('orientation', 'true');
 

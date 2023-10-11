@@ -1,11 +1,33 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+/* https://www.swyx.io/css-100-bytes */
+html {
+    max-width: 70ch;
+    padding: 3em 1em;
+    margin: auto;
+    line-height: 1.75;
+    font-size: 1.25em;
 }
 
 #chess-container {
-    width: 400px;
-    height: 400px;
+    width: 70vmin;
+    height: 70vmin;
+}
+
+#hint {
+    background-color: #eee;
+    padding: 10px;
+    border: 1px ridge;
+}
+
+#hint.empty {
+    font-style: italic;
+    color: #555;
+    width: 70vmin;
 }
 
 coords {

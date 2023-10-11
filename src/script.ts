@@ -1,7 +1,7 @@
 import config from '../config.json';
 
 import { getStudy } from './lichessApi';
-import { parse } from './pgnParser';
+import { StudyMove, parse } from './pgnParser';
 
 import { ChessBoard } from './board';
 
@@ -9,7 +9,7 @@ import { ChessBoard } from './board';
 
 //TODO: stuff breaks when a line from the pov of white ends on black's turn
 
-export type Variation = { line: string[]; orientation: 'white' | 'black' };
+export type Variation = { line: StudyMove[]; orientation: 'white' | 'black' };
 
 const shuffle = <T>(arr: readonly T[]) => {
     let array = [...arr];
@@ -32,6 +32,7 @@ const shuffle = <T>(arr: readonly T[]) => {
 
 const main = async () => {
     const studyPgn = await getStudy(config.studyId, config.accessToken);
+    console.log(studyPgn);
     const parsed = parse(studyPgn);
 
     const chessBoardContainer = document.getElementById('chess-container')!;
@@ -47,6 +48,23 @@ const main = async () => {
     });
 
     board.loadChapter(shuffle(allVariations));
+};
+
+export const setHint = (hint: string | undefined) => {
+    const hintContainer = document.getElementById('hint') as HTMLDivElement;
+
+    // https://stackoverflow.com/a/3955238/13996389
+    while (hintContainer.firstChild) {
+        hintContainer.firstChild.remove();
+    }
+    hintContainer.classList.remove('empty');
+
+    if (hint === undefined) {
+        hintContainer.classList.add('empty');
+        hintContainer.innerText = 'No comment';
+    } else {
+        hintContainer.innerText = hint;
+    }
 };
 
 main();

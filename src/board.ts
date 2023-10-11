@@ -5,7 +5,7 @@ import { Dests } from 'chessground/types';
 
 import { Chess, Move, QUEEN, SQUARES } from 'chess.js';
 import { ChapterInfo } from './pgnParser';
-import { Variation } from './script';
+import { Variation, setHint } from './script';
 
 const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -52,6 +52,13 @@ export class ChessBoard {
         this.chessGround = Chessground(container, this.config);
     }
 
+    setCurrentHint() {
+        const currentPly = this.boardState.history().length;
+        const currentMove = this.lines![this.linesIdx].line[currentPly];
+
+        setHint(currentMove.comments);
+    }
+
     getDests(): Dests {
         // https://github.com/lichess-org/chessground-examples/blob/a2ada8b52fe5b586353afb6d0c0423f91e4540e4/src/util.ts#L5-L12
         const dests = new Map();
@@ -89,10 +96,8 @@ export class ChessBoard {
             },
         });
 
-        this.chessGround;
-
         if (variation.orientation === 'black') {
-            this.boardState.move(variation.line[0]);
+            this.boardState.move(variation.line[0].notation);
             this.chessGround.set({
                 fen: this.boardState.fen(),
                 movable: {
@@ -103,6 +108,8 @@ export class ChessBoard {
                 },
             });
         }
+
+        this.setCurrentHint();
     }
 
     handleMove(move: Move) {
@@ -121,11 +128,11 @@ export class ChessBoard {
         const currentPly = this.boardState.history().length;
         // ply is 1-based, js are 0-based: we need to offset by one
         const expectedMove = this.lines[this.linesIdx].line[currentPly - 1];
-        const isMoveWrong = expectedMove !== move.san;
+        const isMoveWrong = expectedMove.notation !== move.san;
         if (isMoveWrong) {
-            alert(`Wrong! Expected ${expectedMove}, got ${move.san}`);
+            alert(`Wrong! Expected ${expectedMove.notation}, got ${move.san}`);
         }
-        console.log(`Expected ${expectedMove}, got ${move.san}`);
+        console.log(`Expected ${expectedMove.notation}, got ${move.san}`);
 
         // line is over, load the next one
         if (currentPly === this.lines[this.linesIdx].line.length || isMoveWrong) {
@@ -142,11 +149,12 @@ export class ChessBoard {
         //otherwise, load then next move of the varation
         const nextMove = this.lines[this.linesIdx].line[currentPly];
 
-        this.boardState.move(nextMove);
+        this.boardState.move(nextMove.notation);
         // update the ui
         this.chessGround.set({
             fen: this.boardState.fen(),
         });
+        this.setCurrentHint();
 
         return;
     }
