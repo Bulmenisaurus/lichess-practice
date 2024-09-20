@@ -16,12 +16,14 @@ html {
 #chess-container {
     width: 70vmin;
     height: 70vmin;
+    grid-column: 1;
 }
 
 #hint {
     background-color: #eee;
     padding: 10px;
     border: 1px ridge;
+    grid-column: 1;
 }
 
 #hint.empty {
@@ -32,4 +34,23 @@ html {
 
 coords {
     user-select: none;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    height:;
+}
+
+#moves-container {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    background-color: #eee;
+    border: 1px ridge;
+    padding: 0.5em 0.5em;
+}
+
+#moves-container ol {
+    list-style-position: inside;
 }

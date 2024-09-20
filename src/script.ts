@@ -35,8 +35,10 @@ const main = async () => {
     console.log(studyPgn);
     const parsed = parse(studyPgn);
 
+    const moveList = document.getElementById('moves')!;
+
     const chessBoardContainer = document.getElementById('chess-container')!;
-    const board = new ChessBoard(chessBoardContainer);
+    const board = new ChessBoard(chessBoardContainer, moveList);
 
     const allVariations: Variation[] = [];
     parsed.asWhite.variations.forEach((variation) => {

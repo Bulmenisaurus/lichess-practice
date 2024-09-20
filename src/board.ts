@@ -15,10 +15,13 @@ export class ChessBoard {
     boardState: Chess;
     lines: Variation[] | undefined;
     linesIdx: number;
-    constructor(container: HTMLElement) {
+    moveListContainer: HTMLElement;
+    constructor(container: HTMLElement, moveListContainer: HTMLElement) {
         //@ts-ignore
         window.chessBoard = this;
         this.linesIdx = 0;
+
+        this.moveListContainer = moveListContainer;
 
         this.boardState = new Chess(START_FEN);
 
@@ -134,6 +137,10 @@ export class ChessBoard {
         }
         console.log(`Expected ${expectedMove.notation}, got ${move.san}`);
 
+        while (this.moveListContainer.firstChild) {
+            this.moveListContainer.firstChild.remove();
+        }
+
         // line is over, load the next one
         if (currentPly === this.lines[this.linesIdx].line.length || isMoveWrong) {
             // lines concluded
@@ -143,6 +150,7 @@ export class ChessBoard {
 
             this.linesIdx += 1;
             this.loadCurrentVariation();
+
             return;
         }
 
@@ -155,6 +163,14 @@ export class ChessBoard {
             fen: this.boardState.fen(),
         });
         this.setCurrentHint();
+
+        // update move list
+        for (const move of this.lines[this.linesIdx].line.slice(0, currentPly + 1)) {
+            const moveContainer = document.createElement('li');
+            moveContainer.innerText = move.notation;
+
+            this.moveListContainer.appendChild(moveContainer);
+        }
 
         return;
     }
